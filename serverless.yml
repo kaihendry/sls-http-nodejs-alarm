@@ -1,4 +1,4 @@
-service: alarm-me
+service: alarm-me-rest
 frameworkVersion: '2'
 
 provider:
@@ -11,8 +11,8 @@ functions:
   hello:
     handler: handler.hello
     events:
-      - httpApi:
-          path: /
+      - http:
+          path: hello
           method: get
 
 resources:
@@ -26,12 +26,10 @@ resources:
       Type: AWS::CloudWatch::Alarm
       Properties:
         Namespace: AWS/ApiGateway
-        MetricName: 5xx
+        MetricName: 5XXError
         Dimensions:
-          - Name: ApiId
-            Value: !Ref HttpApi
-          - Name: Stage
-            Value: '$default'
+          - Name: ApiName
+            Value: ${self:provider.stage}-${self:service}
         Statistic: Sum
         ComparisonOperator: GreaterThanThreshold
         Threshold: 0
