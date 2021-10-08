@@ -14,6 +14,12 @@ functions:
       - http:
           path: hello
           method: get
+  there:
+    handler: handler.hello
+    events:
+      - http:
+          path: there
+          method: get
 
 resources:
   Resources:
@@ -33,6 +39,22 @@ resources:
         Statistic: Sum
         ComparisonOperator: GreaterThanThreshold
         Threshold: 0
+        Period: 60
+        EvaluationPeriods: 1
+        AlarmActions:
+          - Ref: NotifyMe
+
+    Api4xxAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        Namespace: AWS/ApiGateway
+        MetricName: 4XXError
+        Dimensions:
+          - Name: ApiName
+            Value: ${self:provider.stage}-${self:service}
+        Statistic: Sum
+        ComparisonOperator: GreaterThanThreshold
+        Threshold: 5
         Period: 60
         EvaluationPeriods: 1
         AlarmActions:
