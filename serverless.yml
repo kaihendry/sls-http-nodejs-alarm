@@ -28,8 +28,10 @@ resources:
         Namespace: AWS/ApiGateway
         MetricName: 5XXError
         Dimensions:
-          - Name: ApiName
-            Value: ${self:service}
+          - Name: ApiId
+            Value: !Ref HttpApi
+          - Name: Stage
+            Value: '$default'
         Statistic: Sum
         ComparisonOperator: GreaterThanThreshold
         Threshold: 0
