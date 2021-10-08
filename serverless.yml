@@ -14,3 +14,26 @@ functions:
       - httpApi:
           path: /
           method: get
+
+resources:
+  Resources:
+    NotifyMe:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-NotifyMe
+
+    Api5xxAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        Namespace: AWS/ApiGateway
+        MetricName: 5XXError
+        Dimensions:
+          - Name: ApiName
+            Value: ${self:service}
+        Statistic: Sum
+        ComparisonOperator: GreaterThanThreshold
+        Threshold: 0
+        Period: 60
+        EvaluationPeriods: 1
+        AlarmActions:
+          - Ref: NotifyMe
