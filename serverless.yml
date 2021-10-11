@@ -6,8 +6,17 @@ provider:
   region: ap-southeast-1
   runtime: nodejs14.x
   lambdaHashingVersion: '20201221'
+  httpApi:
+    metrics: true
 
 functions:
+  there:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /there
+          method: get
+
   hello:
     handler: handler.hello
     events:
@@ -32,6 +41,10 @@ resources:
             Value: !Ref HttpApi
           - Name: Stage
             Value: '$default'
+          - Name: Resource
+            Value: '/'
+          - Name: Method
+            Value: 'GET'
         Statistic: Sum
         ComparisonOperator: GreaterThanThreshold
         Threshold: 0
